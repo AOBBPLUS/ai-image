@@ -48,5 +48,31 @@ public class MainTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void test02(){
+        Constants.baseHttpApiUrl = "https://ws-2o9uw28fguatnoo9.cn-beijing.maas.aliyuncs.com/api/v1";
+
+        MultiModalConversation conv = new MultiModalConversation();
+        MultiModalMessage userMessage = MultiModalMessage.builder()
+                .role(Role.USER.getValue())
+                .content(Arrays.asList(
+                        Collections.singletonMap("text", "帮我生成一张中世纪风格的村庄图片")
+                ))
+                .build();
+        MultiModalConversationParam param = MultiModalConversationParam.builder()
+                .apiKey("sk-ws-H.EIXXMMI.uETh.MEQCIAMXw95pODFPG7M3B1hh2NyXdhDJ0guXBzrR8RrsjliXAiByelQ39sPXkeByjGnutYZMr95tayClXq9VtKYP2Uk7Qw")
+                .model("qwen-image-3.0-pro")
+                .n(1)
+                .messages(Arrays.asList(userMessage))
+                .parameter("prompt_extend", true)
+                .parameter("watermark",false)
+                .build();
+        try {
+            MultiModalConversationResult result = conv.call(param);
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

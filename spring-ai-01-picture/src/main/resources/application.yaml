@@ -4,5 +4,13 @@ spring:
       chat:
         options:
           model: qwen-image-3.0-pro # 配置图片的模型名称
-
       api-key: sk-ws-H.EIXXMMI.uETh.MEQCIAMXw95pODFPG7M3B1hh2NyXdhDJ0guXBzrR8RrsjliXAiByelQ39sPXkeByjGnutYZMr95tayClXq9VtKYP2Uk7Qw # 配置百炼平台的api-key
+
+baseUrl: https://ws-2o9uw28fguatnoo9.cn-beijing.maas.aliyuncs.com/api/v1
+parameters:
+  n: 1
+  prompt_extend: true
+  watermark: false
+  size: 1024*1024
+
+
