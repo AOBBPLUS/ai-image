@@ -54,4 +54,11 @@ public class MainTest {
         }
     }
 
+    @Test
+    public void test04() {
+        System.out.println(chatClient.prompt()
+                .user("你好啊，介绍一下你自己")
+                .call()
+                .content());
+    }
 }
