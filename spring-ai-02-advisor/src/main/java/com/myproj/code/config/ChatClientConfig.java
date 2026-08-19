@@ -1,6 +1,7 @@
 package com.myproj.code.config;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.myproj.code.advisor.CurrentLimitAdvisor;
 import com.myproj.code.advisor.FilterAdvisor;
 import com.myproj.code.advisor.LogAdvisor;
 import jakarta.annotation.Resource;
@@ -19,10 +20,13 @@ public class ChatClientConfig {
     @Resource
     private FilterAdvisor filterAdvisor;
 
+    @Resource
+    private CurrentLimitAdvisor currentLimitAdvisor;
+
     @Bean
     public ChatClient getChatClient() {
         return ChatClient.builder(dashScopeChatModel)
-                .defaultAdvisors(logAdvisor, filterAdvisor)
+                .defaultAdvisors(logAdvisor, filterAdvisor, currentLimitAdvisor)
                 .build();
     }
 }

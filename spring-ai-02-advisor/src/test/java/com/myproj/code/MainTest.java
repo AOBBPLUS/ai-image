@@ -26,7 +26,7 @@ public class MainTest {
     private ChatClient chatClient;
 
     @Test
-    public void test01(){
+    public void test01() {
         ChatClient.CallResponseSpec call = chatClient.prompt()
                 .user("今天天气如何？")
                 .call();
@@ -34,11 +34,24 @@ public class MainTest {
     }
 
     @Test
-    public void test02(){
+    public void test02() {
         ChatClient.CallResponseSpec call = chatClient.prompt()
                 .user("今天天气如何？嘻嘻")
                 .call();
         System.out.println(call.content());
+    }
+
+    // 使用多线程的方式来请求测试限流
+    @Test
+    public void test03() {
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                System.out.println(chatClient.prompt()
+                        .user("你好,嘻嘻")
+                        .call()
+                        .content());
+            }).start();
+        }
     }
 
 }

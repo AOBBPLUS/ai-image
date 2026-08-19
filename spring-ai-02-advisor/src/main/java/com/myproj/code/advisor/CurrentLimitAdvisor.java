@@ -1,6 +1,6 @@
 package com.myproj.code.advisor;
 
-import cn.hutool.dfa.WordTree;
+import com.google.common.util.concurrent.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClientRequest;
@@ -9,25 +9,20 @@ import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
-public class FilterAdvisor implements BaseAdvisor {
+public class CurrentLimitAdvisor implements BaseAdvisor {
 
-    private static final Logger logger = LoggerFactory.getLogger(FilterAdvisor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CurrentLimitAdvisor.class);
 
-    private static final WordTree WORD_TREE = new WordTree();
+    //生成令牌,没鸟两个
+    private final RateLimiter rateLimiter = RateLimiter.create(2.0);
 
-    static {
-        List<String> words = List.of("嘻嘻", "哈哈");
-        WORD_TREE.addWords(words);
-    }
     @Override
     public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
-        String text = chatClientRequest.prompt().getUserMessage().getText();
-        if(WORD_TREE.isMatch(text) ){
-            logger.info("【拦截信息】：用户输入包含违禁词：{}",WORD_TREE.matchAll(text));
-            throw new RuntimeException("用户输入内容违反规定！");
+        String userInput = chatClientRequest.prompt().getUserMessage().getText();
+        if(!rateLimiter.tryAcquire()){
+            logger.info("【限流】：请求被拒绝，用户输入: {}",userInput);
+            throw new RuntimeException("系统繁忙，请稍后再试（限流触发）");
         }
         return chatClientRequest;
     }
@@ -39,6 +34,6 @@ public class FilterAdvisor implements BaseAdvisor {
 
     @Override
     public int getOrder() {
-        return 1;
+        return 0;
     }
 }
