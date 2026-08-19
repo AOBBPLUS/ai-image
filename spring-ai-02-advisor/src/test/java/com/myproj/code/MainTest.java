@@ -33,4 +33,12 @@ public class MainTest {
         System.out.println(call.content());
     }
 
+    @Test
+    public void test02(){
+        ChatClient.CallResponseSpec call = chatClient.prompt()
+                .user("今天天气如何？嘻嘻")
+                .call();
+        System.out.println(call.content());
+    }
+
 }

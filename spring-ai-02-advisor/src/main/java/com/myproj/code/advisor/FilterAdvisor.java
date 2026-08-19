@@ -1,5 +1,6 @@
 package com.myproj.code.advisor;
 
+import cn.hutool.dfa.WordTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClientRequest;
@@ -8,44 +9,36 @@ import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
-public class LogAdvisor implements BaseAdvisor {
+public class FilterAdvisor implements BaseAdvisor {
 
     private static final Logger logger = LoggerFactory.getLogger(LogAdvisor.class);
 
-    /**
-     * 调用LLM之前
-     *
-     * @param chatClientRequest
-     * @param advisorChain
-     * @return
-     */
+    private static final WordTree WORD_TREE = new WordTree();
+
+    static {
+        List<String> words = List.of("嘻嘻", "哈哈");
+        WORD_TREE.addWords(words);
+    }
     @Override
     public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
-        logger.info("【请求日志】，用户输入{}，调用LLM为{}", chatClientRequest.prompt().getUserMessage().getText(), chatClientRequest.prompt().getOptions().getModel());
+        String text = chatClientRequest.prompt().getUserMessage().getText();
+        if(WORD_TREE.isMatch(text) ){
+            logger.info("【拦截信息】：用户输入包含违禁词：{}",WORD_TREE.matchAll(text));
+            throw new RuntimeException("用户输入内容违反规定！");
+        }
         return chatClientRequest;
     }
 
-    /**
-     * 调用LLM之后
-     *
-     * @param chatClientResponse
-     * @param advisorChain
-     * @return
-     */
     @Override
     public ChatClientResponse after(ChatClientResponse chatClientResponse, AdvisorChain advisorChain) {
-        logger.info("【响应日志】：AI响应：{}", chatClientResponse.chatResponse().getResult().getOutput().getText());
         return chatClientResponse;
     }
 
-    /**
-     * 执行优先级，非负数，越小优先级越高
-     *
-     * @return
-     */
     @Override
     public int getOrder() {
-        return 1;
+        return 0;
     }
 }
