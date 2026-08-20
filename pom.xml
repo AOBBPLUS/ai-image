@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>spring-ai-01-picture</module>
+        <module>spring-ai-03-agent01</module>
     </modules>
 
     <properties>
