@@ -17,6 +17,7 @@
     <modules>
         <module>spring-ai-01-picture</module>
         <module>spring-ai-03-agent01</module>
+        <module>spring-ai-04-agent02</module>
     </modules>
 
     <properties>
